@@ -27,13 +27,13 @@ int main() {
             printf("=================================\n");
 
             long long segundosPasados = (long long)tiempoActual - miMascota.ultimoAcceso;
-            int ciclosTranscurridos = segundosPasados / 30; // 1 ciclo = 30 segundos
+            int ciclosTranscurridos = segundosPasados / SEGUNDOS_POR_CICLO;
 
             if (ciclosTranscurridos > 0) {
                 printf("\nHan pasado %d ciclos en tiempo real desde tu ultima visita...\n", ciclosTranscurridos);
                 pasarTiempo(&miMascota, ciclosTranscurridos);
                 printf("Presiona ENTER para continuar...");
-                getchar(); getchar(); 
+                getchar();
             }
         }
     } else {
@@ -75,24 +75,28 @@ int main() {
             break;
         }
 
+        int accionExitosa = 0;
+
         switch (opcion) {
-            case 1: alimentar(&miMascota); break;
-            case 2: jugar(&miMascota); break;
-            case 3: dormir(&miMascota); break;
-            case 4: medicar(&miMascota); break;
-            case 5: printf("\nDejas pasar el tiempo libre...\n"); break;
+            case 1: accionExitosa = alimentar(&miMascota); break;
+            case 2: accionExitosa = jugar(&miMascota); break;
+            case 3: accionExitosa = dormir(&miMascota); break;
+            case 4: accionExitosa = medicar(&miMascota); break;
+            case 5: printf("\nDejas pasar el tiempo libre...\n"); accionExitosa = 1; break;
             default: printf("\nOpcion invalida.\n"); continue;
         }
 
-        // Procesa el ciclo local actual de la accion elegida
-        pasarTiempo(&miMascota, 1);
-        
-        // Guarda automaticamente el progreso
-        if (miMascota.vivo) {
-            miMascota.ultimoAcceso = (long long)time(NULL);
-            guardarMascota(miMascota);
+        // Solo avanza el ciclo si la accion realmente se ejecuto con exito
+        if (accionExitosa) {
+            pasarTiempo(&miMascota, 1);
+
+            // Guarda automaticamente el progreso
+            if (miMascota.vivo) {
+                miMascota.ultimoAcceso = (long long)time(NULL);
+                guardarMascota(miMascota);
+            }
         }
-        
+
         printf("\nPresiona ENTER para continuar...");
         getchar(); getchar(); 
     }
