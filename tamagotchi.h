@@ -1,6 +1,9 @@
 #ifndef TAMAGOTCHI_H
 #define TAMAGOTCHI_H
 
+// Constante centralizada: segundos del mundo real por cada ciclo de simulacion
+#define SEGUNDOS_POR_CICLO 30
+
 typedef struct {
     char nombre[30];
     int hambre;      // 0 = lleno, 100 = hambriento
@@ -18,10 +21,10 @@ void dibujarBarra(const char *label, int val, int max);
 void dibujarMascota(Tamagotchi t);
 void mostrarEstado(Tamagotchi t);
 void pasarTiempo(Tamagotchi *t, int ciclos);
-void alimentar(Tamagotchi *t);
-void jugar(Tamagotchi *t);
-void dormir(Tamagotchi *t);
-void medicar(Tamagotchi *t);
+int alimentar(Tamagotchi *t);
+int jugar(Tamagotchi *t);
+int dormir(Tamagotchi *t);
+int medicar(Tamagotchi *t);
 
 // Persistencia y Utilidades
 void guardarMascota(Tamagotchi t);
