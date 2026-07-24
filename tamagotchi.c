@@ -74,7 +74,7 @@ void mostrarEstado(Tamagotchi t) {
     
     printf("---------------------------------\n");
     dibujarBarra("Hambre", t.hambre, 100);
-    dibujarBarra("Energia", t.energia, 1000); // Mapped out of 100 max limits
+    dibujarBarra("Energia", t.energia, 100);
     dibujarBarra("Felicidad", t.felicidad, 100);
     printf("=================================\n");
 }
@@ -109,10 +109,10 @@ void pasarTiempo(Tamagotchi *t, int ciclos) {
     }
 }
 
-void alimentar(Tamagotchi *t) {
+int alimentar(Tamagotchi *t) {
     if (t->hambre <= 0) {
         printf("\n%s ya esta completamente lleno.\n", t->nombre);
-        return;
+        return 0;
     }
     printf("\nAlimentas a %s. ¡Nam nam!\n", t->nombre);
     t->hambre -= 25;
@@ -120,16 +120,17 @@ void alimentar(Tamagotchi *t) {
     
     if (t->hambre < 0) t->hambre = 0;
     if (t->felicidad > 100) t->felicidad = 100;
+    return 1;
 }
 
-void jugar(Tamagotchi *t) {
+int jugar(Tamagotchi *t) {
     if (t->energia < 25) {
         printf("\n%s esta muy cansado para jugar.\n", t->nombre);
-        return;
+        return 0;
     }
     if (t->enfermo) {
         printf("\n%s se siente mal para jugar.\n", t->nombre);
-        return;
+        return 0;
     }
 
     printf("\nJuegas con %s.\n", t->nombre);
@@ -140,12 +141,13 @@ void jugar(Tamagotchi *t) {
     if (t->felicidad > 100) t->felicidad = 100;
     if (t->hambre > 100)    t->hambre = 100;
     if (t->energia < 0)     t->energia = 0;
+    return 1;
 }
 
-void dormir(Tamagotchi *t) {
+int dormir(Tamagotchi *t) {
     if (t->energia >= 100) {
         printf("\n%s no tiene sueno.\n", t->nombre);
-        return;
+        return 0;
     }
     printf("\n%s toma una siesta. Zzz...\n", t->nombre);
     t->energia += 45;
@@ -153,17 +155,19 @@ void dormir(Tamagotchi *t) {
 
     if (t->energia > 100) t->energia = 100;
     if (t->hambre > 100)    t->hambre = 100;
+    return 1;
 }
 
-void medicar(Tamagotchi *t) {
+int medicar(Tamagotchi *t) {
     if (!t->enfermo) {
         printf("\n%s no necesita medicina.\n", t->nombre);
-        return;
+        return 0;
     }
     printf("\nLe das medicina a %s.\n", t->nombre);
     t->enfermo = 0;
     t->felicidad += 15;
     if (t->felicidad > 100) t->felicidad = 100;
+    return 1;
 }
 
 void guardarMascota(Tamagotchi t) {
@@ -177,7 +181,7 @@ void guardarMascota(Tamagotchi t) {
 int cargarMascota(Tamagotchi *t) {
     FILE *archivo = fopen("tamagotchi.dat", "rb");
     if (archivo == NULL) return 0;
-    fread(t, sizeof(Tamagotchi), 1, archivo);
+    size_t elementosLeidos = fread(t, sizeof(Tamagotchi), 1, archivo);
     fclose(archivo);
-    return 1; 
+    return elementosLeidos == 1; // 0 si el archivo estaba truncado/corrupto
 }
